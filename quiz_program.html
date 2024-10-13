@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Program</title>
+  <link rel="stylesheet" href="./All CSS styles/quiz_program.css">
+</head>
+<body>
+  <div class="whole-wrapper d-flex flex-row justify-content-center">
+    <div class="wrapper d-flex flex-column justify-content-center">
+    <h1 class="Main-heading p-3">Quiz Program</h1>
+      <div class="container_box p-3">
+        <div class="question poppins-regular"></div>
+        <div class="Choose_buttons">
+          <button class="choose">1 chooose</button>
+          <button class="choose">2 chooose</button>
+          <button class="choose">3 chooose</button>
+          <button class="choose">4 chooose</button>
+        </div> 
+        <div class="button-container d-flex flex-row justify-content-center">
+          <button class="Next btn btn-primary p-2">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+  {
+    question: "What does CSS stand for?",
+    answers: [
+      { option: "Creative Style System", correct: false },
+      { option: "Cascading Style Sheets", correct: true },
+      { option: "Computer Style Sheets", correct: false },
+      { option: "Colorful Style Sheets", correct: false }
+    ]
+  },
+  {
+    question: "Which property is used to change the background color?",
+    answers: [
+      { option: "bgcolor", correct: false },
+      { option: "background-color", correct: true },
+      { option: "color", correct: false },
+      { option: "background", correct: false }
+    ]
+  },
+  {
+    question: "How do you select an element with id 'header' in CSS?",
+    answers: [
+      { option: "#header", correct: true },
+      { option: ".header", correct: false },
+      { option: "header", correct: false },
+      { option: "*header", correct: false }
+    ]
+  },
+  {
+    question: "Which CSS property controls the text size?",
+    answers: [
+      { option: "font-size", correct: true },
+      { option: "text-size", correct: false },
+      { option: "text-style", correct: false },
+      { option: "font-style", correct: false }
+    ]
+  },
+  {
+    question: "Which property is used to create space between elements?",
+    answers: [
+      { option: "padding", correct: false },
+      { option: "margin", correct: true },
+      { option: "spacing", correct: false },
+      { option: "border", correct: false }
+    ]
+  }
+];
+
+const questionElement = document.querySelector('.question')
+let choiceButton = document.querySelector('.Choose_buttons')
+const nextButton = document.querySelector('.Next');
+
+
+let currentQuestion = 0;
+let score = 0;
+
+function startQuiz(){
+  currentQuestion = 0;//initialize currentQuestion as 0 to get first index of question array
+  score = 0;
+  nextButton.innerHTML = 'Next';
+  showQuestion();
+}
+
+function showQuestion(){
+  resetState();
+  let currentQuestionDisplay = questions[currentQuestion];//Get current index of question array. Array"questions[index]".
+  let questionNo = currentQuestion + 1
+  questionElement.innerHTML = `${questionNo}. ${currentQuestionDisplay.question}`
+  
+  //show options 
+  currentQuestionDisplay.answers.forEach(answers => {
+    const button = document.createElement('button');//create button element 
+    button.innerHTML = answers.option; //Add Array[questions] of objects first index object{answers.options}
+    button.classList.add('btn');
+    button.classList.add('btn-style')
+    choiceButton.appendChild(button);
+    if(answers.correct){
+      button.dataset.correct = answers.correct;
+    }
+    button.addEventListener('click', (e)=>{
+      const selectedBtn  = e.target;
+      const isCorrect = selectedBtn.dataset.correct === 'true';
+      if(isCorrect){
+        selectedBtn.classList.add('btn-success');
+        score++
+      }else{
+        selectedBtn.classList.add('btn-danger');
+      }
+      Array.from(choiceButton.children).forEach(button =>{
+        if(button.dataset.correct === 'true'){
+          button.classList.add('btn-success');
+        }
+        button.disabled = true;
+      });
+      nextButton.style.display = 'block';
+    })
+  })
+}
+
+Array.from(choiceButton)
+
+function resetState(){
+  nextButton.style.display = 'none';
+  while(choiceButton.firstChild){
+    choiceButton.removeChild(choiceButton.firstChild)
+  }
+}
+
+function showScore(){
+  resetState();
+  questionElement.innerHTML = `your score ${score} out of ${questions.length}`;
+  nextButton.innerHTML= 'play again';
+  nextButton.style.display = 'block';
+}
+
+
+function handleNextButton(){
+  currentQuestion++;
+  if(currentQuestion<questions.length){
+    showQuestion();
+  }else{
+    showScore();
+  }
+}
+
+nextButton.addEventListener('click', ()=>{
+  if(currentQuestion < questions.length){
+    handleNextButton();
+  }else{
+    startQuiz();
+  }
+})
+startQuiz();
+  </script>
+</body>
+</html>
